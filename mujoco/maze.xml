@@ -1,0 +1,79 @@
+<mujoco model="maze">
+    <compiler angle="degree"/>
+    <option gravity="0 0 -9.81" timestep="0.01"/>
+
+    <default>
+        <geom friction="1 0.1 0.1" density="1000"/>
+        <joint damping="1"/>
+    </default>
+
+    <worldbody>
+        <light pos="0 0 5"/>
+
+        <!-- Floor -->
+        <geom type="plane" size="20 20 0.1" rgba="1 1 1 1"/>
+
+        <!-- ================= WALLS ================= -->
+        <!-- Outer -->
+        <geom type="box" pos="0 6 0.25" size="0.1 6 0.25"/>
+        <geom type="box" pos="3 12 0.25" size="3 0.1 0.25"/>
+        <geom type="box" pos="6 6 0.25" size="0.1 6 0.25"/>
+        <geom type="box" pos="3 0 0.25" size="3 0.1 0.25"/>
+
+        <!-- Internal (same as your builder) -->
+        <geom type="box" pos="2 1 0.25" size="0.1 1 0.25"/>
+        <geom type="box" pos="3 2 0.25" size="1 0.1 0.25"/>
+        <geom type="box" pos="1 4 0.25" size="1 0.1 0.25"/>
+        <geom type="box" pos="2 5 0.25" size="0.1 1 0.25"/>
+        <geom type="box" pos="3 6 0.25" size="1 0.1 0.25"/>
+        <geom type="box" pos="4 5 0.25" size="0.1 1 0.25"/>
+        <geom type="box" pos="5 8 0.25" size="1 0.1 0.25"/>
+        <geom type="box" pos="2 9 0.25" size="0.1 1 0.25"/>
+        <geom type="box" pos="3 10 0.25" size="1 0.1 0.25"/>
+        <geom type="box" pos="5 10 0.25" size="1 0.1 0.25"/>
+
+        <!-- ================= ROBOT ================= -->
+        <body name="robot" pos="1 1 0.25">
+            <freejoint/>
+
+            <!-- chassis -->
+            <geom type="box" size="0.32 0.32 0.1" mass="15" rgba="0 0 1 1"/>
+
+            <!-- ================= FRONT (POWERED) ================= -->
+            <!-- left wheel -->
+            <body pos="0.25 0.35 -0.12">
+                <joint name="left_wheel" type="hinge" axis="0 1 0"/>
+                <geom type="sphere" size="0.1" friction="2 0.1 0.1" rgba="0 0 0 1"/>
+            </body>
+
+            <!-- right wheel -->
+            <body pos="0.25 -0.35 -0.12">
+                <joint name="right_wheel" type="hinge" axis="0 1 0"/>
+                <geom type="sphere" size="0.1" friction="2 0.1 0.1" rgba="0 0 0 1"/>
+            </body>
+
+            <!-- ================= BACK (PASSIVE) ================= -->
+            <!-- rear left -->
+            <body pos="-0.25 0.35 -0.12">
+                <joint name="rear_left" type="hinge" axis="0 1 0"/>
+                <geom type="sphere" size="0.08"
+                    friction="0.3 0.005 0.002"
+                    rgba="0 1 0 1"/>
+            </body>
+
+            <!-- rear right -->
+            <body pos="-0.25 -0.35 -0.12">
+                <joint name="rear_right" type="hinge" axis="0 1 0"/>
+                <geom type="sphere" size="0.08"
+                    friction="0.3 0.005 0.002"
+                    rgba="0 1 0 1"/>
+            </body>
+
+        </body>
+    </worldbody>
+
+    <actuator>
+        <velocity joint="left_wheel" ctrlrange="-50 50"/>
+        <velocity joint="right_wheel" ctrlrange="-50 50"/>
+    </actuator>
+</mujoco>

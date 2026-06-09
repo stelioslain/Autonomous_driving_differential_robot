@@ -1,0 +1,19 @@
+name: autonomous_robot_rl
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.9.18
+  - pip
+  - numpy
+  - matplotlib
+  - pip:
+      - gymnasium
+      - mujoco
+      - stable-baselines3[extra]
+      - torch
+      - pyserial
+      - pybullet
+      - transformations
+      - tensorboard
