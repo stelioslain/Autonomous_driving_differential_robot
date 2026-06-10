@@ -24,8 +24,6 @@ def test_model(model_path="ppo_maze_visual", num_episodes=10):
         while not done:
             # Get action from policy
             action, _states = model.predict(obs, deterministic=True)
-            # action += np.random.normal(0, 0.08, size=action.shape)
-            # action = np.clip(action, -1, 1)
             
             # Step environment
             obs, reward, terminated, truncated, _ = env.step(action)
