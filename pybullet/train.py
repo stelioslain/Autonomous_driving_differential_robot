@@ -37,7 +37,7 @@ def main():
     print("A PyBullet window should open showing the robot.")
     print("Training will be SLOWER but you can watch learning.")
     
-    model.learn(total_timesteps=600_000)  # Start with 100k steps
+    model.learn(total_timesteps=600_000)
     
     # Save model
     model.save("ppo_maze_visual")
