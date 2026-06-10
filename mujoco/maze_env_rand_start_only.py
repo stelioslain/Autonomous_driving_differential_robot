@@ -116,7 +116,7 @@ class MazeEnv(gym.Env):
         # ---------- FOR RANDOM STARTING POINT ----------
         # Find all free cells (value 0) except the goal
         free_cells = np.argwhere(self.maze == 0)
-        goal_cell = np.array([5, 11])  # (y, x) in your maze indexing
+        goal_cell = np.array([5, 11])  # (y, x) in the maze indexing
         free_cells = np.array([cell for cell in free_cells if not np.array_equal(cell[::-1], goal_cell)])
 
         # Random orientation
@@ -289,6 +289,7 @@ class MazeEnv(gym.Env):
             if dist < 0:
                 dist = max_dist
 
+            # Array with the distances to the nearest objects
             dists.append(min(dist, max_dist))
 
         return np.array(dists)
@@ -321,7 +322,7 @@ class MazeEnv(gym.Env):
         while queue:
             x, y, d = queue.popleft()
 
-            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]: # Looks if the neighbouring cells are free
                 nx, ny = x + dx, y + dy
 
                 if not (0 <= nx < self.maze_w and 0 <= ny < self.maze_h):
