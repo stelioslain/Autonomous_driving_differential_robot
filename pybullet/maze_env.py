@@ -29,7 +29,6 @@ class MazeEnv(gym.Env):
         self.action_space = gym.spaces.Box(
             low=np.array([-1, -1]), 
             high=np.array([1, 1]), 
-            # shape=(2,), 
             dtype=np.float32
         )
         
@@ -40,10 +39,7 @@ class MazeEnv(gym.Env):
         self.steps = 0
         self.goal_ever_reached = False
         self.reference_path = None
-        # self.wall_hug_steps = 0
-        # self.last_safe_pos = None
-        # self.last_safe_ori = None
-
+        
         self.reset()
 
     def reset(self, seed=None, options=None):
@@ -57,8 +53,6 @@ class MazeEnv(gym.Env):
         
         self.steps = 0
         
-        #########################################
-        # LATHOS LOGIKH - H SWSTH EINAI KANENA CELL KAI KATHE ZYGO EINAI TOIXOS POU EINAI EITE ON EITE OFF
         # Occupancy grid
         # @ = unknown
         # _ = free
@@ -67,7 +61,6 @@ class MazeEnv(gym.Env):
 
         # Visitation counter (episode-local)
         self.visit_count = np.zeros((self.maze_h, self.maze_w), dtype=np.int32)
-        #########################################
         
         # Robot body new dimensions (1x1 robot)
         ROBOT_HALF_SIZE = 0.45  # Half-extent for 1x1 robot (0.45 * 2 = 0.9)
@@ -157,7 +150,6 @@ class MazeEnv(gym.Env):
         pos, _ = p.getBasePositionAndOrientation(self.robot)
         start = (int(pos[0]), int(pos[1]))
         goal = (int(self.goal[0]), int(self.goal[1]))
-        # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ allagh EPITYXIA
         
         self.prev_grid_dist = self._bfs_distance(start, goal)
         
@@ -168,8 +160,6 @@ class MazeEnv(gym.Env):
                 cameraPitch=-80,
                 cameraTargetPosition=[6, 10, 0]
             )
-
-        # self.prev_dist = self._distance_to_goal()
         
         # Initialize visited cells tracking
         self.visited_cells = set()
@@ -178,9 +168,7 @@ class MazeEnv(gym.Env):
         pos, _ = p.getBasePositionAndOrientation(self.robot)
         start_cell = (int(pos[0]), int(pos[1]))
         self.visited_cells.add(start_cell)
-        # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ allagh EPITYXIA
 
-        # obs = lidar_scan(self.robot)
         obs = self._get_obs()
         
         # Bootstrap occupancy with robot cell
@@ -189,7 +177,6 @@ class MazeEnv(gym.Env):
         cy = int(pos[1])
         if 0 <= cx < (self.maze_w) and 0 <= cy < (self.maze_h):
             self.occupancy[cy, cx] = '_' # Starting cell is always free
-        # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ allagh EPITYXIA
         return obs, {}
     
     def _bfs_distance(self, start, goal):
@@ -205,11 +192,6 @@ class MazeEnv(gym.Env):
         gx, gy = goal
         gx = int(np.floor(gx))
         gy = int(np.floor(gy))
-
-        #if sx % 2 == 0 or sy % 2 == 0:
-        #    return np.inf
-        #if gx % 2 == 0 or gy % 2 == 0:
-        #    return np.inf
         
         if not (0 <= sx < self.maze_w and 0 <= sy < self.maze_h):
             return np.inf
@@ -225,7 +207,7 @@ class MazeEnv(gym.Env):
         while queue:
             x, y, d = queue.popleft()
 
-            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]: # Looks to the neighbouring cells
                 nx, ny = x + dx, y + dy
 
                 if not (0 <= nx < self.maze_w and 0 <= ny < self.maze_h):
@@ -250,31 +232,8 @@ class MazeEnv(gym.Env):
         lidar, hits = lidar_scan(self.robot)
         angles = np.linspace(0, 2*np.pi, len(lidar), endpoint=False)
 
-        # max_range = 3.0
-
         for dist, hit, a in zip(lidar, hits, angles):
             angle = yaw + a
-
-            # hit = False
-
-            # px = pos[0] + dist * np.cos(angle)
-            # py = pos[1] + dist * np.sin(angle)
-
-            # gx = int(np.floor(px))
-            # gy = int(np.floor(py))
-
-            # if not (0 <= gx < self.occupancy.shape[1] and
-                    # 0 <= gy < self.occupancy.shape[0]):
-                # break
-
-            # Stop ray if wall already known
-            # if self.occupancy[gy, gx] == -1:
-            #     hit = True
-            #     continue
-
-            # Mark free ONLY if unknown
-            # if self.occupancy[gy, gx] == '@':
-            #     self.occupancy[gy, gx] = 0
 
             # Mark wall cell at the end of ray
             if hit == True:
@@ -296,7 +255,6 @@ class MazeEnv(gym.Env):
 
         if 0 <= cx < self.maze_w and 0 <= cy < self.maze_h:
             self.occupancy[cy, cx] = '_'
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ allagh
 
     def _update_visit_count(self):
         pos, _ = p.getBasePositionAndOrientation(self.robot)
@@ -305,11 +263,9 @@ class MazeEnv(gym.Env):
 
         if 0 <= cx < (self.maze_w) and 0 <= cy < (self.maze_h):
             self.visit_count[cy, cx] += 1
-            # self.occupancy[cy, cx] = 1  # robot cell is free
             
             return cx, cy
         return None, None
-    # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ allagh
     
     def _get_obs(self):
         pos, ori = p.getBasePositionAndOrientation(self.robot)
@@ -391,26 +347,26 @@ class MazeEnv(gym.Env):
 
         # 1. Empty check
         if not path or len(path) == 0:
-            print("❌ Path is empty")
+            print("Path is empty")
             return False
 
         print(f"✔ Path length: {len(path)}")
 
         # 2. Start / goal presence
         if start not in path:
-            print("❌ Start NOT in path:", start)
+            print("Start NOT in path:", start)
             return False
         print("✔ Start in path")
 
         if goal not in path:
-            print("❌ Goal NOT in path:", goal)
+            print("Goal NOT in path:", goal)
             return False
         print("✔ Goal in path")
 
         # 3. Wall check
         for (x, y) in path:
             if self.maze[y, x] == -1:
-                print("❌ Path goes through wall at:", (x, y))
+                print("Path goes through wall at:", (x, y))
                 return False
         print("✔ No wall cells in path")
 
@@ -422,22 +378,22 @@ class MazeEnv(gym.Env):
             ]
             if (x, y) not in [start, goal]:
                 if not any(n in path for n in neighbors):
-                    print("❌ Disconnected cell in path:", (x, y))
+                    print("Disconnected cell in path:", (x, y))
                     return False
-        print("✔ Path is 4-connected")
+        print("Path is 4-connected")
 
         # 5. Optimal length check
         bfs_dist = self._bfs_distance(start, goal)
         if bfs_dist == np.inf:
-            print("❌ BFS distance is infinite")
+            print("BFS distance is infinite")
             return False
 
         if len(path) != bfs_dist + 1:
-            print(f"⚠ Path length mismatch: BFS={bfs_dist}, path={len(path)}")
+            print(f"Path length mismatch: BFS={bfs_dist}, path={len(path)}")
         else:
-            print("✔ Path length matches BFS shortest distance")
+            print("Path length matches BFS shortest distance")
 
-        print("✅ Reference path VALID")
+        print("Reference path VALID")
         return True
     
     def _distance_to_reference_path(self, cx, cy):
@@ -463,7 +419,6 @@ class MazeEnv(gym.Env):
         forward, steering = action
         
         # Convert to differential drive
-        # base_speed = 5.0
         left = forward - steering
         right = forward + steering
         
@@ -501,7 +456,6 @@ class MazeEnv(gym.Env):
             grid_dist = self.prev_grid_dist
         else:
             grid_dist = self._bfs_distance((cx, cy), goal_cell)
-        # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ allagh ----- NA FTIAKSW TO MPAGK POU KOLLAEI MESA SE TOIXO
         
         # To not "pass" through/jump between walls
         if abs(grid_dist - self.prev_grid_dist) >= 8:
@@ -522,7 +476,6 @@ class MazeEnv(gym.Env):
         # Adding weights to the path-to-goal after first finding of the goal
         if reached_goal and not self.goal_ever_reached:
             self.goal_ever_reached = True
-            # print(self.occupancy)
             self.reference_path = self._compute_reference_path()
             # self._validate_reference_path(self.reference_path)
             # self._draw_reference_path()
