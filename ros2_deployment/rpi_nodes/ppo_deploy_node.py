@@ -39,9 +39,6 @@ SIM_UNITS_PER_METER = SIM_NODE_DISTANCE / REAL_NODE_DISTANCE_M
 # RF2O → MAZE POSITION SIGNS
 # ============================================================
 
-# You said this cell logic is now correct.
-# Keep these unless the cell logic becomes wrong again.
-
 MAZE_FORWARD_SIGN = 1.0
 MAZE_RIGHT_SIGN = -1.0
 
@@ -177,7 +174,7 @@ class PPOMazeDeploy(Node):
         # ====================================================
 
         # The real motors are not perfectly symmetric.
-        # Your test showed that left reverse needs more PWM
+        # The test showed that left reverse needs more PWM
         # than right reverse to produce a mirrored curve.
         #
         # Tune only these values after motor tests.
@@ -204,7 +201,6 @@ class PPOMazeDeploy(Node):
         # MOTOR FRAME
         # ====================================================
 
-        # Keep this from the version that behaved better.
         # If raw_act[0] > 0 and the robot moves the wrong way,
         # test changing this to -1.0.
         self.FORWARD_SIGN = 1.0
@@ -223,10 +219,9 @@ class PPOMazeDeploy(Node):
         # still uses the body/front direction as lidar ray 0.
         #
         # Therefore:
-        # lidar_data[0] must represent real physical FRONT,
-        # not necessarily movement direction.
+        # lidar_data[0] must represent real physical FRONT
         #
-        # Your robot physical front corresponds to lidar 180 degrees.
+        # The robot's physical front corresponds to lidar 180 degrees.
         self.LIDAR_YAW_OFFSET = math.pi
 
         # If lidar_L and lidar_R are swapped, change this to -1.0.
@@ -240,7 +235,7 @@ class PPOMazeDeploy(Node):
         # Zeroing it is safer for first successful deployment.
         self.USE_ODOM_TWIST = False
 
-        # Use simulation-like PID, but latched and weak.
+        # Use simulation-like PID.
         self.USE_ORIENTATION_PID = False
 
         # ====================================================
@@ -306,7 +301,7 @@ class PPOMazeDeploy(Node):
         # Where "username" is your Raspberry Pi username and "ppo_mujoco_fine_tuned.zip" is the name of the model file you want to test.
         
         self.model = PPO.load(
-            "best_model.zip"
+            "ppo_mujoco_fine_tuned.zip"
         )
 
         self.get_logger().info(
@@ -444,6 +439,7 @@ class PPOMazeDeploy(Node):
         return index
 
     def get_sector_value(self, msg, center_angle_rad, width_deg=8):
+        # Returns the distances from the nearest wall/obstacle
 
         ranges = np.array(
             msg.ranges,
@@ -491,14 +487,6 @@ class PPOMazeDeploy(Node):
 
             return self.max_lidar
 
-        # Robust but still obstacle-sensitive.
-        # return float(
-        #     np.percentile(
-        #         distances,
-        #         20
-        #     )
-        # )
-        # Closer to simulation raycast: nearest obstacle in that direction.
         return float(np.median(distances))
 
     def make_lidar_observation(self, msg):
@@ -594,7 +582,6 @@ class PPOMazeDeploy(Node):
         )
 
         # Convert RF2O odom displacement to the starting odom frame.
-        # Keep this because your cell logic is currently correct.
         cos0 = np.cos(
             self.initial_odom_yaw
         )
