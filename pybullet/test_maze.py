@@ -1,3 +1,5 @@
+# Testing the maze's spawn and walls
+
 import pybullet as p
 import pybullet_data
 import time
