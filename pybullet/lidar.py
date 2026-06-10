@@ -25,11 +25,12 @@ def lidar_scan(robot_id, num_rays=16, max_dist=3.0, visualize=False):
         ]
         
         hit = p.rayTest(ray_from, ray_to)[0]
-        # dist = max_dist if hit[0] == -1 else hit[2] * max_dist
         if hit[0] == -1 or hit[0] == robot_id:
+            # Nothing hit
             dist = max_dist
             hits.append(False)
         else:
+            # Hit wall/obstacle
             dist = hit[2] * max_dist
             hits.append(True)
         
