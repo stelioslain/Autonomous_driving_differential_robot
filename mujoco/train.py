@@ -4,7 +4,6 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import BaseCallback, EvalCallback, CheckpointCallback
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
-#from maze_env_fine_tune import MazeEnv
 from maze_env_rand_start_only import MazeEnv
 
 def main():
