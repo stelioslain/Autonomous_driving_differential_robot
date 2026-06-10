@@ -2,7 +2,6 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.callbacks import EvalCallback
 from stable_baselines3.common.monitor import Monitor
-#from maze_env_fine_tune import MazeEnv
 from maze_env_rand_start_only import MazeEnv
 import os
 
@@ -16,7 +15,7 @@ eval_env = DummyVecEnv([lambda: Monitor(MazeEnv(render=False))])
 
 eval_callback = EvalCallback(
     eval_env,
-    best_model_save_path="./logs_finetune/best_model",
+    best_model_save_path="../models",
     log_path="./logs_finetune/eval",
     eval_freq=10000,
     n_eval_episodes=20,
@@ -25,7 +24,7 @@ eval_callback = EvalCallback(
 )
 
 model = PPO.load(
-    "./logs/best_model/best_model.zip",
+    "../models/ppo_mujoco.zip",
     env=env
 )
 
