@@ -1,7 +1,3 @@
-// Ultrasonic sensor pins
-//const int trigPin = 11;
-//const int echoPin = 3;
-
 // Motor direction control pins
 const int IN1 = 4;  // Left motor forward
 const int IN2 = 5;  // Left motor backward
@@ -24,16 +20,11 @@ void setup() {
   pinMode(ENA, OUTPUT);
   pinMode(ENB, OUTPUT);
 
-  // Ultrasonic sensor pins
-  //pinMode(trigPin, OUTPUT);
-  //pinMode(echoPin, INPUT);
-
   stopLeftMotor();
   stopRightMotor();
 
   Serial.begin(115200);
   while (!Serial); // Wait for serial
-  // Serial.println("Motor Control with Ultrasonic Sensor Ready");
 }
 
 void loop() {
@@ -56,13 +47,6 @@ void checkSerialCommand() {
 
     char motor = toLowerCase(inputString.charAt(0));
 
-    // Handle distance request
-    //if (inputString.equalsIgnoreCase("d")) {
-    //  int distance = readDistance();
-    //  Serial.print("Distance: ");
-    //  Serial.print(distance);
-    //  Serial.println(" cm");
-    //}
     // Handle stop command (e.g., "rs", "ls")
     if (inputString.length() == 2 && toLowerCase(inputString.charAt(1)) == 's') {
       if (motor == 'r') {
@@ -93,16 +77,6 @@ void checkSerialCommand() {
     inputComplete = false;
   }
 }
-
-//int readDistance() {
-//  digitalWrite(trigPin, LOW);
-//  delayMicroseconds(2);
-//  digitalWrite(trigPin, HIGH);
-//  delayMicroseconds(10);
-//  digitalWrite(trigPin, LOW);
-//  long duration = pulseIn(echoPin, HIGH);
-//  return duration * 0.034 / 2;
-//}
 
 void setRightMotor(int spd) {
   if (spd > 0) {
