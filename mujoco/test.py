@@ -6,8 +6,8 @@ from maze_env_rand_start_only import MazeEnv
 ####### TO TEST THE TRAINED MODEL CHANGE THE DIRECTORY BELOW TO "../models/ppo_mujoco.zip", ELSE IF YOU WANT TO TEST THE FINE-TUNED MODEL LEAVE IT AS IS #######
 def test_model(model_path="../models/ppo_mujoco_fine_tuned.zip", num_episodes=100):
     # Load environment
+    # With "render=False" the mujoco environment won't show, whereas with "render=True" it will
     env = MazeEnv(render=False)
-    # env.start = np.array([1.0, 1.0])
     
     # Load model
     print(f"Loading model from {model_path}...")
