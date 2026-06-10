@@ -19,7 +19,7 @@ def main():
     
     eval_callback = EvalCallback(
         eval_env,
-        best_model_save_path="./logs/best_model",
+        best_model_save_path="../models",
         log_path="./logs/eval",
         eval_freq=10000, # Evaluate every 10k steps
         n_eval_episodes=20, # 20 episodes per evaluation
@@ -55,7 +55,7 @@ def main():
     model.learn(total_timesteps=3_000_000, callback=eval_callback)
     
     # Save model
-    model.save("ppo_mujoco")
+    model.save("ppo_mujoco.zip")
     env.close()
     print("Training complete!")
 
