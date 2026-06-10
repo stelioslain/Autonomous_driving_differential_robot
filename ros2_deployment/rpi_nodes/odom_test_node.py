@@ -76,13 +76,9 @@ class OdomTest(Node):
         y = pose.position.y
 
         q = pose.orientation
-        #print(q)
 
         quat = [q.x, q.y, q.z, q.w]
-
-        # yaw = transformations.euler_from_quaternion(quat)[2]
         yaw = 2 * np.arctan2(q.z, q.w)
-        #yaw = (yaw + np.pi) % (2*np.pi) - np.pi
 
         # =========================================
         # START TEST
